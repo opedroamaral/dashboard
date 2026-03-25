@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
       `,
     ]);
 
-    const salesMap = new Map(
+    const salesMap = new Map<string, { revenue: number; sales: number }>(
       salesRaw.map((s: SalesRow) => [s.utmContent, { revenue: s.revenue, sales: s.sales }])
     );
 
