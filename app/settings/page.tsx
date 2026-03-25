@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 
 function SettingsContent() {
@@ -79,8 +79,76 @@ function SettingsContent() {
             </p>
           </Card>
         </div>
+
+        <div className="mt-6">
+          <HublaImport />
+        </div>
       </div>
     </div>
+  );
+}
+
+function HublaImport() {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ imported?: number; skipped?: number; error?: string } | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLoading(true);
+    setResult(null);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/hubla/import", { method: "POST", body: formData });
+      const data = await res.json();
+      setResult(data);
+    } catch {
+      setResult({ error: "Erro ao enviar arquivo" });
+    } finally {
+      setLoading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  return (
+    <Card>
+      <h2 className="text-base font-semibold text-slate-100 mb-1">Importar Histórico Hubla</h2>
+      <p className="text-sm text-slate-500 mb-4">
+        Exporte o relatório de vendas da Hubla (Excel) e faça o upload para importar o histórico completo.
+      </p>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept=".xlsx,.xls"
+        onChange={handleUpload}
+        className="hidden"
+        id="hubla-file"
+      />
+      <label
+        htmlFor="hubla-file"
+        className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors ${
+          loading
+            ? "bg-slate-700 text-slate-400 cursor-not-allowed"
+            : "bg-indigo-600 hover:bg-indigo-500 text-white"
+        }`}
+      >
+        {loading ? "Importando..." : "Selecionar arquivo .xlsx"}
+      </label>
+
+      {result && (
+        <div className={`mt-4 px-4 py-3 rounded-lg text-sm ${result.error ? "bg-red-500/10 border border-red-500/30 text-red-400" : "bg-emerald-500/10 border border-emerald-500/30 text-emerald-400"}`}>
+          {result.error
+            ? result.error
+            : `${result.imported} vendas importadas, ${result.skipped} ignoradas.`}
+        </div>
+      )}
+    </Card>
   );
 }
 
