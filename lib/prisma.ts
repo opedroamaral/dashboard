@@ -4,13 +4,12 @@ import { PrismaPg } from "@prisma/adapter-pg";
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
-    throw new Error("DATABASE_URL environment variable is not set");
+    // Durante o build estático a variável pode não existir.
+    // Retorna um cliente sem adapter — vai falhar só se realmente usado sem DATABASE_URL.
+    return new PrismaClient();
   }
   const adapter = new PrismaPg({ connectionString });
-  return new PrismaClient({
-    adapter,
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
-  });
+  return new PrismaClient({ adapter });
 }
 
 const globalForPrisma = globalThis as unknown as {

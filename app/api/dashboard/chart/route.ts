@@ -3,6 +3,8 @@ import prisma from "@/lib/prisma";
 import { parseLocalDate, startOfDay, endOfDay, getDateRange, formatDate, fillMissingDates } from "@/lib/date";
 import type { ChartDataPoint } from "@/types/dashboard";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 

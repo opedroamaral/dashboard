@@ -9,6 +9,8 @@ import {
 import { parseLocalDate, startOfDay, endOfDay, getDateRange } from "@/lib/date";
 import type { KPIMetrics } from "@/types/dashboard";
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
