@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model FacebookAccount {
+  id             String    @id @default(cuid())
+  accountId      String    @unique
+  accessToken    String
+  tokenExpiresAt DateTime?
+  userId         String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  ads FacebookAd[]
+}
+
+model FacebookAd {
+  id                 String   @id @default(cuid())
+  adId               String
+  campaignName       String
+  adsetName          String
+  adName             String
+  spend              Decimal  @default(0) @db.Decimal(10, 2)
+  impressions        Int      @default(0)
+  linkClicks         Int      @default(0)
+  landingPageViews   Int      @default(0)
+  checkoutsInitiated Int      @default(0)
+  date               DateTime @db.Date
+  accountId          String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  account FacebookAccount @relation(fields: [accountId], references: [accountId])
+
+  @@unique([adId, date])
+  @@index([date])
+  @@index([adId])
+}
+
+model Sale {
+  id              String    @id @default(cuid())
+  utmContent      String?
+  transactionId   String    @unique
+  status          String
+  saleValue       Decimal   @db.Decimal(10, 2)
+  totalSaleValue  Decimal   @db.Decimal(10, 2)
+  productName     String
+  buyerEmail      String?
+  transactionDate DateTime
+  platform        String    @default("hotmart")
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  orderBumps OrderBump[]
+
+  @@index([utmContent])
+  @@index([transactionDate])
+}
+
+model OrderBump {
+  id        String   @id @default(cuid())
+  saleId    String
+  name      String
+  value     Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+
+  sale Sale @relation(fields: [saleId], references: [id])
+}

@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/sync",
+      "schedule": "*/30 * * * *"
+    }
+  ],
+  "functions": {
+    "app/api/cron/sync/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/facebook/sync/route.ts": {
+      "maxDuration": 60
+    }
+  }
+}
