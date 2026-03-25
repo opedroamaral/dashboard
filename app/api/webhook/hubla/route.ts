@@ -1,33 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyHotmartSignature, parseHotmartPayload } from "@/lib/hotmart";
+import { verifyHublaSignature, parseHublaPayload } from "@/lib/hubla";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
-import type { HotmartWebhookBody } from "@/types/hotmart";
+import type { HublaWebhookBody } from "@/types/hubla";
 
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
-  const signature = request.headers.get("x-hotmart-hottok") ?? "";
-  const secret = process.env.HOTMART_SECRET ?? "";
+  const signature = request.headers.get("x-hubla-signature") ?? "";
+  const secret = process.env.HUBLA_SECRET ?? "";
 
-  if (secret && !verifyHotmartSignature(rawBody, signature, secret)) {
+  if (secret && !verifyHublaSignature(rawBody, signature, secret)) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let body: HotmartWebhookBody;
+  let body: HublaWebhookBody;
   try {
     body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const ignoredEvents = ["PURCHASE_BILLET_PRINTED", "PURCHASE_PROTEST"];
+  const ignoredEvents = ["sale.pending", "sale.processing"];
   if (ignoredEvents.includes(body.event)) {
     return NextResponse.json({ ok: true });
   }
 
   try {
-    const parsed = parseHotmartPayload(body);
+    const parsed = parseHublaPayload(body);
 
     await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       const sale = await tx.sale.upsert({
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[webhook/hotmart] Error:", err);
+    console.error("[webhook/hubla] Error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

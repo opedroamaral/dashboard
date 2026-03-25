@@ -53,15 +53,29 @@ function SettingsContent() {
             <p className="text-sm text-slate-500 mb-4">
               Configure a URL abaixo nas configurações de webhook da Hotmart.
             </p>
-            <div className="flex items-center gap-2">
-              <code className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-mono">
-                {typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"}/api/webhook/hotmart
-              </code>
-            </div>
+            <code className="block bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-mono">
+              {typeof window !== "undefined" ? window.location.origin : "https://seudominio.com"}/api/webhook/hotmart
+            </code>
             <p className="mt-3 text-xs text-slate-500">
-              Eventos necessários: <code className="text-slate-400">PURCHASE_APPROVED</code>,{" "}
+              Eventos: <code className="text-slate-400">PURCHASE_APPROVED</code>,{" "}
               <code className="text-slate-400">PURCHASE_COMPLETE</code>,{" "}
               <code className="text-slate-400">PURCHASE_REFUNDED</code>
+            </p>
+          </Card>
+        </div>
+
+        <div className="mt-6">
+          <Card>
+            <h2 className="text-base font-semibold text-slate-100 mb-1">Webhook Hubla</h2>
+            <p className="text-sm text-slate-500 mb-4">
+              Configure a URL abaixo nas configurações de webhook da Hubla.
+            </p>
+            <code className="block bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-mono">
+              {typeof window !== "undefined" ? window.location.origin : "https://seudominio.com"}/api/webhook/hubla
+            </code>
+            <p className="mt-3 text-xs text-slate-500">
+              Eventos: <code className="text-slate-400">sale.approved</code>,{" "}
+              <code className="text-slate-400">sale.refunded</code>
             </p>
           </Card>
         </div>
