@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyHublaSignature, parseHublaPayload } from "@/lib/hubla";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import type { TransactionClient } from "@/types/prisma";
 import type { HublaWebhookBody } from "@/types/hubla";
 
 export async function POST(request: NextRequest) {
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
   try {
     const parsed = parseHublaPayload(body);
 
-    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+    await prisma.$transaction(async (tx: TransactionClient) => {
       const sale = await tx.sale.upsert({
         where: { transactionId: parsed.transactionId },
         create: {
