@@ -4,6 +4,8 @@ import prisma from "@/lib/prisma";
 import type { TransactionClient } from "@/types/prisma";
 import type { HublaWebhookBody } from "@/types/hubla";
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   const rawBody = await request.text();
 
