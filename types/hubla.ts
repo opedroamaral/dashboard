@@ -1,31 +1,47 @@
 export interface HublaWebhookBody {
-  event: string;
-  data: HublaData;
+  type: string;
+  version: string;
+  event: HublaEventData;
 }
 
-export interface HublaData {
-  id: string;
-  status: string;
-  totalAmount: number;
-  amount: number;
-  currency: string;
+export interface HublaEventData {
   product: {
     id: string;
     name: string;
   };
-  buyer: {
+  products?: { id: string; name: string }[];
+  invoice: HublaInvoice;
+  user: {
+    id: string;
+    firstName: string;
+    lastName: string;
     email: string;
-    name: string;
   };
-  utmParams?: {
-    utm_source?: string;
-    utm_medium?: string;
-    utm_campaign?: string;
-    utm_term?: string;
-    utm_content?: string;
+}
+
+export interface HublaInvoice {
+  id: string;
+  parentInvoiceId?: string;
+  status: string;
+  saleDate: string;
+  amount: {
+    subtotalCents: number;
+    totalCents: number;
   };
-  items?: HublaOrderBump[];
-  createdAt: string;
+  payer: {
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+  paymentSession?: {
+    utm?: {
+      source?: string;
+      medium?: string;
+      campaign?: string;
+      content?: string;
+      term?: string;
+    };
+  };
 }
 
 export interface HublaOrderBump {
