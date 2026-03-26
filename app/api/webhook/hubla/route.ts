@@ -23,6 +23,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  // Log payload para debug de estrutura
+  console.log("[webhook/hubla] payload:", JSON.stringify(body, null, 2));
+
   const ignoredEvents = ["sale.pending", "sale.processing"];
   if (ignoredEvents.includes(body.event)) {
     return NextResponse.json({ ok: true });
